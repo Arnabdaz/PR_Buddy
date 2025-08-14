@@ -1,5 +1,29 @@
 # 🚀 PR Buddy - Quick Reference Guide
 
+## 📜 AI Rules Overview
+
+PR Buddy includes three intelligent rules that enhance Cursor's Agent Mode:
+
+| Rule            | File              | Purpose                         | Activation Keywords               |
+| --------------- | ----------------- | ------------------------------- | --------------------------------- |
+| **PR Creation** | `pr-creation.mdc` | Creates PRs with Jira context   | create, prepare, PR, pull request |
+| **PR Review**   | `pr-review.mdc`   | Reviews PRs for bugs & security | review, analyze, check, scan      |
+| **PR Update**   | `pr-update.mdc`   | Updates PR descriptions safely  | update, sync, modify, enhance     |
+
+### Global Installation
+
+```bash
+# Install rules globally (available in all projects)
+cp rules/*.mdc ~/.cursor/rules/
+```
+
+### Rule Capabilities
+
+- **Automatic activation** based on intent
+- **Context awareness** from workspace
+- **MCP server integration** for operations
+- **Intelligent decision making** for complex tasks
+
 ## 🎯 Quick Commands
 
 ### PR Creation
@@ -213,6 +237,63 @@ export MCP_LOG_LEVEL="DEBUG"  # For troubleshooting
 @agent Create PR that implements DSE-5678 requirements
 @agent Verify PR #789 meets all DSE-5678 acceptance criteria
 @agent Update PR #789 with latest DSE-5678 changes
+```
+
+## 🎭 Rules Management
+
+### Check Installed Rules
+
+```bash
+# List global rules
+ls -la ~/.cursor/rules/
+
+# List project rules (if any)
+ls -la .cursor/rules/
+```
+
+### Update Rules
+
+```bash
+# Pull latest from PR Buddy
+cd /path/to/pr-buddy && git pull
+cp rules/*.mdc ~/.cursor/rules/
+
+# Restart Cursor to apply changes
+```
+
+### Manage Rules
+
+```bash
+# Disable rules temporarily
+mv ~/.cursor/rules ~/.cursor/rules.backup
+
+# Re-enable rules
+mv ~/.cursor/rules.backup ~/.cursor/rules
+
+# Remove specific rule
+rm ~/.cursor/rules/pr-update.mdc
+
+# Backup rules before updates
+cp -r ~/.cursor/rules ~/.cursor/rules.$(date +%Y%m%d)
+```
+
+### Rule Loading Priority
+
+1. **Project rules** (`.cursor/rules/`) - Highest priority, override global
+2. **Global rules** (`~/.cursor/rules/`) - Default for all projects
+3. **Built-in Cursor rules** - Lowest priority
+
+### Rule Debugging
+
+```bash
+# Check if rules are loaded (in Cursor)
+# Open Developer Tools: Help > Toggle Developer Tools
+# Look for rule loading messages in Console
+
+# Test rule activation
+@agent test PR creation rule
+@agent test PR review rule
+@agent test PR update rule
 ```
 
 ---

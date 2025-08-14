@@ -21,6 +21,10 @@ pr-buddy/
 ├── ARCHITECTURE_ASCII.md       # ASCII diagrams for local viewing
 ├── setup_pr_buddy.sh          # Automated setup script
 ├── .gitmodules                # Submodule configuration
+├── rules/                     # AI rules for Cursor
+│   ├── pr-creation.mdc       # PR creation assistant rule
+│   ├── pr-review.mdc         # PR review assistant rule
+│   └── pr-update.mdc         # PR update assistant rule
 └── servers/                   # MCP servers (git submodules)
     ├── cve-search/           # CVE vulnerability scanner (GitHub)
     ├── git/                  # Git operations server (GitHub)
@@ -157,6 +161,7 @@ The script will:
 - ✅ Install all MCP servers
 - ✅ Prompt for configuration (GitHub, Jira)
 - ✅ Generate ready-to-use `mcp.json` for Cursor
+- ✅ Copy AI rules to Cursor's global rules directory
 - ✅ Test your connections
 - ✅ Provide clear next steps
 
@@ -226,19 +231,22 @@ cp ~/.pr-buddy/mcp.json ~/.cursor/mcp.json
 cat ~/.pr-buddy/mcp.json
 ```
 
-### Step 5: Install PR Buddy Rules (Optional)
+### Step 5: Install PR Buddy Rules
 
-If you have the PR Buddy AI rules:
+PR Buddy includes three AI rules that enhance Cursor's Agent Mode:
 
 ```bash
-# Create Cursor rules directory
+# Create Cursor rules directory if it doesn't exist
 mkdir -p ~/.cursor/rules
 
-# Copy PR Buddy rules (adjust path as needed)
-cp /path/to/pr-buddy-rules/*.mdc ~/.cursor/rules/
+# Copy PR Buddy rules from the repository
+cp rules/*.mdc ~/.cursor/rules/
+
+# Or copy them globally (recommended)
+cp rules/*.mdc "$HOME/.cursor/rules/"
 ```
 
-> **Note:** The rules enable intelligent PR creation, review, and update workflows in Cursor's Agent Mode.
+> **Note:** The rules enable intelligent PR creation, review, and update workflows in Cursor's Agent Mode. They are installed globally and will be available for all your projects.
 
 ## ✅ Testing Your Setup
 
@@ -298,6 +306,67 @@ sequenceDiagram
     User->>PRBuddy: Decision on findings
     PRBuddy->>GitHub: Post review (if requested)
 ```
+
+## 📜 Global Rules Management in Cursor
+
+### Understanding Cursor Rules
+
+Cursor supports both **global** and **project-specific** rules:
+
+1. **Global Rules** (`~/.cursor/rules/`)
+
+   - Available across ALL your projects
+   - Ideal for PR Buddy rules since you want them everywhere
+   - Automatically loaded when Cursor starts
+   - No need to copy rules to each repository
+
+2. **Project Rules** (`.cursor/rules/` in project root)
+   - Only available in that specific project
+   - Override global rules with the same name
+   - Useful for project-specific customizations
+
+### Installing PR Buddy Rules Globally (Recommended)
+
+```bash
+# One-time global installation
+mkdir -p ~/.cursor/rules
+cp /path/to/pr-buddy/rules/*.mdc ~/.cursor/rules/
+
+# Verify installation
+ls -la ~/.cursor/rules/
+# Should show:
+# pr-creation.mdc
+# pr-review.mdc
+# pr-update.mdc
+```
+
+### Managing Rules
+
+```bash
+# Update rules from PR Buddy repo
+cd /path/to/pr-buddy
+git pull
+cp rules/*.mdc ~/.cursor/rules/
+
+# Backup your rules
+cp -r ~/.cursor/rules ~/.cursor/rules.backup
+
+# Remove a specific rule
+rm ~/.cursor/rules/pr-update.mdc
+
+# Disable all PR Buddy rules temporarily
+mv ~/.cursor/rules ~/.cursor/rules.disabled
+```
+
+### Rule Priority & Loading
+
+Cursor loads rules in this order:
+
+1. Project-specific rules (`.cursor/rules/` in workspace)
+2. Global rules (`~/.cursor/rules/`)
+3. Built-in Cursor rules
+
+> **Tip:** Use global rules for PR Buddy to have them available in all your projects without duplication!
 
 ## 💡 Cursor-Specific Features & Tips
 

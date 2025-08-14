@@ -450,10 +450,50 @@ echo
 DEFAULT_GIT_REPO=""
 
 # ============================================================================
-# STEP 6: Generate Configuration
+# STEP 6: Install PR Buddy Rules
 # ============================================================================
 
-print_step "STEP 6: Generating Configuration"
+print_step "STEP 6: Installing PR Buddy Rules"
+
+RULES_DIR="$SCRIPT_DIR/rules"
+CURSOR_RULES_DIR="$HOME/.cursor/rules"
+
+if [ -d "$RULES_DIR" ] && [ "$(ls -A $RULES_DIR/*.mdc 2>/dev/null)" ]; then
+    print_info "Found PR Buddy rules in $RULES_DIR"
+    
+    if prompt_yes_no "Install PR Buddy rules globally for Cursor?"; then
+        # Create Cursor rules directory if it doesn't exist
+        mkdir -p "$CURSOR_RULES_DIR"
+        
+        # Copy rules
+        print_info "Copying rules to Cursor's global rules directory..."
+        cp "$RULES_DIR"/*.mdc "$CURSOR_RULES_DIR/" 2>/dev/null
+        
+        # List installed rules
+        echo "Installed rules:"
+        for rule in "$CURSOR_RULES_DIR"/pr-*.mdc; do
+            if [ -f "$rule" ]; then
+                basename "$rule"
+            fi
+        done
+        
+        print_success "PR Buddy rules installed globally"
+        print_info "These rules will be available in ALL your Cursor projects"
+    else
+        print_warning "Skipping rules installation"
+        echo "You can install them later with:"
+        echo "  cp $RULES_DIR/*.mdc ~/.cursor/rules/"
+    fi
+else
+    print_warning "No rules found in $RULES_DIR"
+    echo "Rules can be added later to: ~/.cursor/rules/"
+fi
+
+# ============================================================================
+# STEP 7: Generate Configuration
+# ============================================================================
+
+print_step "STEP 7: Generating Configuration"
 
 # Create config directory
 CONFIG_DIR="$HOME/.pr-buddy"
@@ -613,10 +653,10 @@ EOF
 print_success "MCP configuration generated: $MCP_CONFIG"
 
 # ============================================================================
-# STEP 7: Test Configuration
+# STEP 8: Test Configuration
 # ============================================================================
 
-print_step "STEP 7: Testing Configuration"
+print_step "STEP 8: Testing Configuration"
 
 if [ -n "$GITHUB_TOKEN" ] && [ -n "$GITHUB_HOST" ]; then
     echo -n "Testing GitHub connection... "
@@ -666,14 +706,12 @@ echo
 echo "   Or manually copy the contents:"
 echo -e "   ${CYAN}cat $MCP_CONFIG${NC}"
 echo
-echo "2. Copy PR Buddy rules to Cursor (if available):"
-echo -e "   ${CYAN}cp /path/to/rules/*.mdc ~/.cursor/rules/${NC}"
+echo "2. Restart Cursor and enable Agent Mode"
 echo
-echo "3. Restart Cursor and enable Agent Mode"
-echo
-echo "4. Test with commands like:"
+echo "3. Test with commands like:"
 echo -e "   ${CYAN}@agent Create a PR for my changes${NC}"
 echo -e "   ${CYAN}@agent Review PR #123${NC}"
+echo -e "   ${CYAN}@agent Update PR #456 description${NC}"
 echo
 
 if [ -z "$GITHUB_TOKEN" ] || [ -z "$JIRA_BASE_URL" ]; then
