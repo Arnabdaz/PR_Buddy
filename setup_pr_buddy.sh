@@ -733,7 +733,7 @@ fi
 echo
 echo -e "${GREEN}╔══════════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║                                                                  ║${NC}"
-echo -e "${GREEN}║              🎉 PR BUDDY SETUP COMPLETE! 🎉                     ║${NC}"
+echo -e "${GREEN}║              🎉 PR BUDDY SETUP COMPLETE! 🎉                       ║${NC}"
 echo -e "${GREEN}║                                                                  ║${NC}"
 echo -e "${GREEN}╚══════════════════════════════════════════════════════════════════╝${NC}"
 echo
@@ -822,3 +822,38 @@ chmod +x "$TEST_SCRIPT"
 
 echo
 print_info "Test your connections anytime with: ${CYAN}$TEST_SCRIPT${NC}"
+
+# ============================================================================
+# LOCAL RULES INSTALLATION INSTRUCTIONS
+# ============================================================================
+
+echo
+echo -e "${BOLD}📂 Installing Rules Locally for Specific Repositories:${NC}"
+echo
+echo "If you want to use PR Buddy rules only in specific projects instead of globally:"
+echo
+echo "1. Navigate to your project repository:"
+echo -e "   ${CYAN}cd /path/to/your/project${NC}"
+echo
+echo "2. Create a local Cursor rules directory:"
+echo -e "   ${CYAN}mkdir -p .cursor/rules${NC}"
+echo
+echo "3. Copy the PR Buddy rules to your project:"
+echo -e "   ${CYAN}cp ${RULES_DIR}/*.mdc .cursor/rules/${NC}"
+echo
+echo "   Or copy specific rules only:"
+echo -e "   ${CYAN}cp ${RULES_DIR}/pr-creation.mdc .cursor/rules/${NC}"
+echo -e "   ${CYAN}cp ${RULES_DIR}/pr-review.mdc .cursor/rules/${NC}"
+echo -e "   ${CYAN}cp ${RULES_DIR}/pr-update.mdc .cursor/rules/${NC}"
+echo
+echo "4. The rules will now be available only in that specific project"
+echo
+echo -e "${BOLD}📝 Note:${NC}"
+echo "   - Project-specific rules override global rules with the same name"
+echo "   - Use global installation (already done) for rules you want everywhere"
+echo "   - Use local installation for project-specific customizations"
+echo
+echo -e "${BOLD}Example usage in your project:${NC}"
+echo -e "   ${CYAN}@pr-creation.mdc Create a draft PR for feature/new-auth${NC}"
+echo -e "   ${CYAN}@pr-review.mdc Review PR owner/repo/789 for security issues${NC}"
+echo -e "   ${CYAN}@pr-update.mdc Update PR owner/repo/456 with latest changes${NC}"
