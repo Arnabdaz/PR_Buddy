@@ -446,13 +446,8 @@ fi
 
 echo
 
-# Repository Configuration
-echo -e "${BOLD}Default Repository:${NC}"
-DETECTED_REPO=""
-if command_exists git && git rev-parse --show-toplevel >/dev/null 2>&1; then
-    DETECTED_REPO=$(git rev-parse --show-toplevel 2>/dev/null)
-fi
-prompt_input "Default Git repository path" "DEFAULT_GIT_REPO" "$DETECTED_REPO"
+# Git server will work with any repository - no default needed
+DEFAULT_GIT_REPO=""
 
 # ============================================================================
 # STEP 6: Generate Configuration
@@ -480,7 +475,8 @@ JIRA_EMAIL="${JIRA_EMAIL}"
 JIRA_API_TOKEN="${JIRA_TOKEN}"
 
 # Repository Configuration
-DEFAULT_GIT_REPO="${DEFAULT_GIT_REPO}"
+# Git server works with any repository - no default needed
+# DEFAULT_GIT_REPO="${DEFAULT_GIT_REPO}"
 
 # Installation Paths
 PR_BUDDY_HOME="${SCRIPT_DIR}"
@@ -513,25 +509,8 @@ cat >> "$MCP_CONFIG" << EOF
     },
 EOF
 
-# Add Git server
-if [ -n "$DEFAULT_GIT_REPO" ]; then
-    cat >> "$MCP_CONFIG" << EOF
-    "pr-buddy-git": {
-      "command": "uv",
-      "args": [
-        "--directory", 
-        "${SERVERS_DIR}/git",
-        "run",
-        "mcp-server-git",
-        "--repository",
-        "${DEFAULT_GIT_REPO}"
-      ],
-      "name": "Git Operations",
-      "description": "Handles local git operations and branch management"
-    },
-EOF
-else
-    cat >> "$MCP_CONFIG" << EOF
+# Add Git server (no default repository - will work with any repo)
+cat >> "$MCP_CONFIG" << EOF
     "pr-buddy-git": {
       "command": "uv",
       "args": [
@@ -544,7 +523,6 @@ else
       "description": "Handles local git operations and branch management"
     },
 EOF
-fi
 
 # Add GitHub server
 if [ "$USE_DOCKER" = true ]; then
