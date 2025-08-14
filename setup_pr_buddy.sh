@@ -749,9 +749,9 @@ echo
 echo "2. Restart Cursor and enable Agent Mode"
 echo
 echo "3. Test with commands like:"
-echo -e "   ${CYAN}@agent Create a PR for my changes${NC}"
-echo -e "   ${CYAN}@agent Review PR #123${NC}"
-echo -e "   ${CYAN}@agent Update PR #456 description${NC}"
+echo -e "   ${CYAN}@pr-creation.mdc Create a PR for my change on master branch${NC}"
+echo -e "   ${CYAN}@pr-review.mdc Review PR Sense/cloudera-sense/123${NC}"
+echo -e "   ${CYAN}@pr-update.mdc Update PR Sense/cloudera-sense/456 description${NC}"
 echo
 
 if [ -z "$GITHUB_TOKEN" ] || [ -z "$JIRA_BASE_URL" ]; then

@@ -387,15 +387,15 @@ The three AI rules automatically activate based on your intent:
 ```markdown
 # For PR Creation
 
-@agent "Create a PR for my recent changes related to authentication feature"
+@pr-creation.mdc "Create a draft PR on master branch for my recent changes related to authentication feature"
 
 # For PR Review
 
-@agent "Review PR #123 for security issues and bugs"
+@pr-review.mdc "Review PR Sense/cloudera-sense/123 for security issues and bugs"
 
 # For PR Update
 
-@agent "Update PR #456 description with latest Jira requirements"
+@pr-update.mdc "Update PR Sense/cloudera-sense/456 description with latest Jira requirements"
 ```
 
 ### 3. Custom Commands & Shortcuts
@@ -408,14 +408,14 @@ Add to your Cursor keybindings (`keybindings.json`):
     "key": "cmd+shift+p cmd+r",
     "command": "workbench.action.chat.open",
     "args": {
-      "query": "@agent Review the current PR for issues"
+      "query": "@pr-review.mdc Review the current PR for issues"
     }
   },
   {
     "key": "cmd+shift+p cmd+c",
     "command": "workbench.action.chat.open",
     "args": {
-      "query": "@agent Create a PR from my staged changes"
+      "query": "@pr-creation.mdc Create a PR from my staged changes to master branch"
     }
   }
 ]
@@ -619,19 +619,19 @@ git submodule update
 ### Example 1: Create PR with Full Context
 
 ```markdown
-@agent Create a PR for the authentication feature. The changes are in the feature/auth-oauth branch. This addresses Jira ticket DSE-1234.
+@pr-creation.mdc Create a PR for the authentication feature on master branch. The changes are in the feature/auth-oauth branch. This addresses Jira ticket DSE-1234.
 ```
 
 ### Example 2: Comprehensive PR Review
 
 ```markdown
-@agent Review PR #789 thoroughly. Check for security vulnerabilities, bugs, performance issues, and Jira compliance. Focus especially on the authentication logic.
+@pr-review.mdc Review PR Sense/cloudera-sense/789 thoroughly. Check for security vulnerabilities, bugs, performance issues, and Jira compliance. Focus especially on the authentication logic.
 ```
 
 ### Example 3: Update PR with Latest Requirements
 
 ```markdown
-@agent Update PR #456 description based on the latest Jira requirements. Preserve the existing test evidence but enhance the description with missing acceptance criteria.
+@pr-update.mdc Update PR Sense/cloudera-sense/456 description based on the latest Jira requirements. Preserve the existing test evidence but enhance the description with missing acceptance criteria.
 ```
 
 ## 📚 Additional Resources
