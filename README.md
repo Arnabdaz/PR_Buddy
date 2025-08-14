@@ -113,11 +113,12 @@ The setup script will:
 
 ### Quick References
 
-| Document                                     | Description                          |
-| -------------------------------------------- | ------------------------------------ |
-| **[📜 Quick Reference](QUICK_REFERENCE.md)** | Command cheat sheet and shortcuts    |
-| **[🏗️ Architecture](ARCHITECTURE_ASCII.md)** | System design and component overview |
-| **[🤝 Contributing](CONTRIBUTING.md)**       | How to contribute to PR Buddy        |
+| Document                                      | Description                           |
+| --------------------------------------------- | ------------------------------------- |
+| **[📜 Quick Reference](QUICK_REFERENCE.md)**  | Command cheat sheet and shortcuts     |
+| **[🏗️ Architecture](docs/ARCHITECTURE.md)**   | Detailed system design and diagrams   |
+| **[📝 ASCII Diagrams](docs/ARCHITECTURE.md)** | Architecture diagrams in ASCII format |
+| **[🤝 Contributing](CONTRIBUTING.md)**        | How to contribute to PR Buddy         |
 
 ## 💡 Usage Examples
 
