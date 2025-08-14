@@ -1,0 +1,12 @@
+[submodule "servers/cve-search"]
+	path = servers/cve-search
+	url = https://github.com/Arnabdaz/CVE-Search-MCP.git
+[submodule "servers/git"]
+	path = servers/git
+	url = https://github.com/Arnabdaz/Git_MCP_finetuned.git
+[submodule "servers/github-mcp-server"]
+	path = servers/github-mcp-server
+	url = https://github.com/Arnabdaz/Github_MCP_trimmed.git
+[submodule "servers/jira-mcp"]
+	path = servers/jira-mcp
+	url = git@github.infra.cloudera.com:arnabdaz/Jira_Cloud_MCP.git

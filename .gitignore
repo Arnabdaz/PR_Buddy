@@ -1,0 +1,30 @@
+# Python
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Config backups
+*.backup
+
+# MCP
+~/.cursor/mcp_settings.json.backup
+~/.pr-buddy/
+
+# Temporary files
+*.tmp
+*.temp
