@@ -9,4 +9,4 @@
 	url = https://github.com/Arnabdaz/Github_MCP_trimmed.git
 [submodule "servers/jira-mcp"]
 	path = servers/jira-mcp
-	url = git@github.infra.cloudera.com:arnabdaz/Jira_Cloud_MCP.git
+	url = https://github.com/Arnabdaz/Jira_MCP_basic.git

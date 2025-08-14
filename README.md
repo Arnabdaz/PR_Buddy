@@ -22,10 +22,10 @@ pr-buddy/
 ├── setup_pr_buddy.sh          # Automated setup script
 ├── .gitmodules                # Submodule configuration
 └── servers/                   # MCP servers (git submodules)
-    ├── cve-search/           # CVE vulnerability scanner
-    ├── git/                  # Git operations server
-    ├── github-mcp-server/    # GitHub integration server
-    └── jira-mcp/            # Jira integration server
+    ├── cve-search/           # CVE vulnerability scanner (GitHub)
+    ├── git/                  # Git operations server (GitHub)
+    ├── github-mcp-server/    # GitHub integration server (GitHub)
+    └── jira-mcp/            # Jira integration server (GitHub)
 ```
 
 > **Note:** The servers are linked as git submodules, allowing independent updates while maintaining a cohesive PR Buddy system.
@@ -136,159 +136,121 @@ Before setting up PR Buddy, ensure you have:
 
 ## 🛠️ Complete Setup Guide
 
-### Step 1: Clone and Prepare
+### Option 1: Interactive Setup (Recommended) 🚀
+
+Simply run the interactive setup script:
 
 ```bash
 # Clone the repository with submodules
-git clone --recursive <your-repo-url> pr-buddy
+git clone --recursive https://github.com/YOUR_USERNAME/pr-buddy.git
 cd pr-buddy
 
-# If you already cloned without --recursive, initialize submodules
-git submodule update --init --recursive
-
-# Create a backup of existing configurations
-cp ~/.cursor/mcp_settings.json ~/.cursor/mcp_settings.json.backup 2>/dev/null || true
+# Run interactive setup
+./setup_pr_buddy.sh
 ```
 
-### Step 2: Install Dependencies
+The script will:
 
-#### 2.1 Install UV Package Manager
+- ✅ Check all system requirements
+- ✅ Install missing dependencies (like UV)
+- ✅ Initialize git submodules
+- ✅ Install all MCP servers
+- ✅ Prompt for configuration (GitHub, Jira)
+- ✅ Generate ready-to-use `mcp.json` for Cursor
+- ✅ Test your connections
+- ✅ Provide clear next steps
+
+### Option 2: Manual Setup
+
+If you prefer manual control, follow these steps:
+
+#### Step 1: Clone and Initialize
 
 ```bash
-# macOS/Linux
+# Clone with submodules
+git clone --recursive https://github.com/YOUR_USERNAME/pr-buddy.git
+cd pr-buddy
+
+# Or if already cloned
+git submodule update --init --recursive
+```
+
+#### Step 2: Install Dependencies
+
+```bash
+# Install UV package manager
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Windows
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
+# Install each server
+cd servers/cve-search && uv sync && cd ../..
+cd servers/git && uv sync && cd ../..
+cd servers/jira-mcp && uv sync && cd ../..
 
-#### 2.2 Setup Each MCP Server
-
-```bash
-# CVE Search Server
-cd servers/cve-search
-uv sync
-cd ../..
-
-# Git Server
-cd servers/git
-uv sync
-cd ../..
-
-# Jira Server
-cd servers/jira-mcp
-uv sync
-cd ../..
-
-# GitHub Server (using Docker)
+# For GitHub server (choose one):
+# Option A: Docker
 docker pull ghcr.io/github/github-mcp-server
+
+# Option B: Build from source
+cd servers/github-mcp-server
+go build -o github-mcp-server cmd/github-mcp-server/main.go
+cd ../..
 ```
 
-### Step 3: Configure Environment Variables
+#### Step 3: Configure
 
-Create a `.env` file in your project root:
+Create `~/.pr-buddy/.env`:
 
 ```bash
 # GitHub Configuration
 GITHUB_PERSONAL_ACCESS_TOKEN="ghp_your_token_here"
-GITHUB_HOST="https://github.com"  # Or your GitHub Enterprise URL
+GITHUB_HOST="https://github.com"
 
 # Jira Configuration
 JIRA_BASE_URL="https://yourcompany.atlassian.net"
 JIRA_EMAIL="your-email@company.com"
 JIRA_API_TOKEN="your_jira_api_token"
 
-# Repository Paths (adjust as needed)
-DEFAULT_GIT_REPO="/path/to/your/main/repo"
+# Repository
+DEFAULT_GIT_REPO="/path/to/your/repo"
 ```
 
-### Step 4: Install PR Buddy Rules in Cursor
+### Step 4: Configure Cursor
 
-Copy the three rule files to your Cursor rules directory:
+After running the setup script, copy the generated configuration:
 
 ```bash
-# Create Cursor rules directory if it doesn't exist
-mkdir -p ~/.cursor/rules
+# Copy the generated MCP configuration to Cursor
+cp ~/.pr-buddy/mcp.json ~/.cursor/mcp.json
 
-# Copy PR Buddy rules
-cp /Users/ardas/Documents/Cloudera/src/github.infra.cloudera.com/cloudera-sense/.cursor/rules/*.mdc ~/.cursor/rules/
-
-# Or if you want project-specific rules
-mkdir -p .cursor/rules
-cp /Users/ardas/Documents/Cloudera/src/github.infra.cloudera.com/cloudera-sense/.cursor/rules/*.mdc .cursor/rules/
+# Or view it first
+cat ~/.pr-buddy/mcp.json
 ```
 
-### Step 5: Configure Cursor MCP Settings
+### Step 5: Install PR Buddy Rules (Optional)
 
-Add this configuration to your Cursor settings:
+If you have the PR Buddy AI rules:
 
-**For Global Configuration:** `~/.cursor/mcp_settings.json`
-**For Project Configuration:** `.cursor/mcp.json`
+```bash
+# Create Cursor rules directory
+mkdir -p ~/.cursor/rules
 
-```json
-{
-  "mcpServers": {
-    "pr-buddy-cve": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/path/to/pr-buddy/servers/cve-search",
-        "run",
-        "python",
-        "main.py"
-      ],
-      "name": "CVE Security Scanner",
-      "description": "Scans for vulnerabilities and CVEs in PR dependencies"
-    },
-    "pr-buddy-git": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/path/to/pr-buddy/servers/git",
-        "run",
-        "mcp-server-git",
-        "--repository",
-        "${env:DEFAULT_GIT_REPO}"
-      ],
-      "name": "Git Operations",
-      "description": "Handles local git operations and branch management"
-    },
-    "pr-buddy-github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "-e",
-        "GITHUB_TOOLSETS=repos,issues,pull_requests,actions,code_security",
-        "ghcr.io/github/github-mcp-server"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
-      },
-      "name": "GitHub Integration",
-      "description": "Manages GitHub PRs, issues, and repository operations"
-    },
-    "pr-buddy-jira": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/path/to/pr-buddy/servers/jira-mcp",
-        "run",
-        "jira-mcp"
-      ],
-      "env": {
-        "JIRA_BASE_URL": "${env:JIRA_BASE_URL}",
-        "JIRA_EMAIL": "${env:JIRA_EMAIL}",
-        "JIRA_API_TOKEN": "${env:JIRA_API_TOKEN}"
-      },
-      "name": "Jira Integration",
-      "description": "Syncs with Jira tickets and requirements"
-    }
-  }
-}
+# Copy PR Buddy rules (adjust path as needed)
+cp /path/to/pr-buddy-rules/*.mdc ~/.cursor/rules/
+```
+
+> **Note:** The rules enable intelligent PR creation, review, and update workflows in Cursor's Agent Mode.
+
+## ✅ Testing Your Setup
+
+After installation, test your configuration:
+
+```bash
+# Test connections
+~/.pr-buddy/test_connection.sh
+
+# Or manually test each service
+curl -H "Authorization: token $GITHUB_PERSONAL_ACCESS_TOKEN" https://api.github.com/user
+curl -u "$JIRA_EMAIL:$JIRA_API_TOKEN" "$JIRA_BASE_URL/rest/api/3/myself"
 ```
 
 ## 🎮 Usage Guide
@@ -544,6 +506,7 @@ graph LR
 ## 📦 Managing Submodules
 
 ### Update All Submodules
+
 ```bash
 # Pull latest changes for all servers
 git submodule update --remote --merge
@@ -553,6 +516,7 @@ git submodule update --remote servers/cve-search
 ```
 
 ### Work with Individual Servers
+
 ```bash
 # Navigate to a server
 cd servers/git
@@ -569,6 +533,7 @@ git commit -m "Update Git server submodule reference"
 ```
 
 ### Clone for Development
+
 ```bash
 # Clone with all submodules
 git clone --recursive https://github.com/YOUR_USERNAME/pr-buddy.git
