@@ -514,21 +514,37 @@ cat >> "$MCP_CONFIG" << EOF
 EOF
 
 # Add Git server
-cat >> "$MCP_CONFIG" << EOF
+if [ -n "$DEFAULT_GIT_REPO" ]; then
+    cat >> "$MCP_CONFIG" << EOF
     "pr-buddy-git": {
       "command": "uv",
       "args": [
         "--directory", 
         "${SERVERS_DIR}/git",
         "run",
-        "mcp-server-git"${DEFAULT_GIT_REPO:+,
+        "mcp-server-git",
         "--repository",
-        "${DEFAULT_GIT_REPO}"}
+        "${DEFAULT_GIT_REPO}"
       ],
       "name": "Git Operations",
       "description": "Handles local git operations and branch management"
     },
 EOF
+else
+    cat >> "$MCP_CONFIG" << EOF
+    "pr-buddy-git": {
+      "command": "uv",
+      "args": [
+        "--directory", 
+        "${SERVERS_DIR}/git",
+        "run",
+        "mcp-server-git"
+      ],
+      "name": "Git Operations",
+      "description": "Handles local git operations and branch management"
+    },
+EOF
+fi
 
 # Add GitHub server
 if [ "$USE_DOCKER" = true ]; then
