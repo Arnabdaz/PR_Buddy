@@ -548,28 +548,54 @@ fi
 
 # Add GitHub server
 if [ "$USE_DOCKER" = true ]; then
-    cat >> "$MCP_CONFIG" << EOF
-    "pr-buddy-github": {
-      "command": "docker",
-      "args": [
+    # Docker version with GitHub host support
+    DOCKER_ARGS='[
         "run",
         "-i",
         "--rm",
         "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN${GITHUB_TOKEN:+=${GITHUB_TOKEN}}",
+        "GITHUB_PERSONAL_ACCESS_TOKEN${GITHUB_TOKEN:+=${GITHUB_TOKEN}}",'
+    
+    # Add GitHub host environment variable if not default
+    if [ "$GITHUB_HOST" != "https://github.com" ] && [ -n "$GITHUB_HOST" ]; then
+        DOCKER_ARGS+='
+        "-e",
+        "GITHUB_HOST=${GITHUB_HOST}",'
+    fi
+    
+    DOCKER_ARGS+='
         "-e",
         "GITHUB_TOOLSETS=repos,issues,pull_requests,actions,code_security",
         "ghcr.io/github/github-mcp-server"
-      ],
+      ]'
+    
+    cat >> "$MCP_CONFIG" << EOF
+    "pr-buddy-github": {
+      "command": "docker",
+      "args": ${DOCKER_ARGS},
       "name": "GitHub Integration",
       "description": "Manages GitHub PRs, issues, and repository operations"
     }${JIRA_BASE_URL:+,}
 EOF
 else
+    # Build args array for non-Docker version
+    GITHUB_ARGS='['
+    
+    # Add GitHub host argument if not default
+    if [ "$GITHUB_HOST" != "https://github.com" ] && [ -n "$GITHUB_HOST" ]; then
+        GITHUB_ARGS+='
+        "--gh-host",
+        "'${GITHUB_HOST}'",'
+    fi
+    
+    GITHUB_ARGS+='
+        "stdio"
+      ]'
+    
     cat >> "$MCP_CONFIG" << EOF
     "pr-buddy-github": {
       "command": "${SERVERS_DIR}/github-mcp-server/github-mcp-server",
-      "args": ["stdio"],
+      "args": ${GITHUB_ARGS},
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
       },
@@ -616,8 +642,16 @@ print_step "STEP 7: Testing Configuration"
 
 if [ -n "$GITHUB_TOKEN" ] && [ -n "$GITHUB_HOST" ]; then
     echo -n "Testing GitHub connection... "
+    # Determine the correct API endpoint based on the GitHub host
+    if [ "$GITHUB_HOST" = "https://github.com" ]; then
+        API_ENDPOINT="${GITHUB_HOST}/user"
+    else
+        # GitHub Enterprise uses /api/v3 prefix
+        API_ENDPOINT="${GITHUB_HOST}/api/v3/user"
+    fi
+    
     if curl -s -H "Authorization: token $GITHUB_TOKEN" \
-         "${GITHUB_HOST}/api/v3/user" 2>/dev/null | grep -q "login"; then
+         "$API_ENDPOINT" 2>/dev/null | grep -q "login"; then
         print_success "Connected"
     else
         print_warning "Failed (check token and hostname)"
@@ -698,9 +732,17 @@ echo "Testing PR Buddy connections..."
 
 # Test GitHub
 if [ -n "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
-echo -n "GitHub: "
+    echo -n "GitHub: "
+    # Determine the correct API endpoint based on the GitHub host
+    if [ "$GITHUB_HOST" = "https://github.com" ]; then
+        API_ENDPOINT="${GITHUB_HOST}/user"
+    else
+        # GitHub Enterprise uses /api/v3 prefix
+        API_ENDPOINT="${GITHUB_HOST}/api/v3/user"
+    fi
+    
     if curl -s -H "Authorization: token $GITHUB_PERSONAL_ACCESS_TOKEN" \
-         "${GITHUB_HOST}/api/v3/user" 2>/dev/null | grep -q "login"; then
+         "$API_ENDPOINT" 2>/dev/null | grep -q "login"; then
         echo "✅ Connected"
     else
         echo "❌ Failed"
