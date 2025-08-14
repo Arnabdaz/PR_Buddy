@@ -129,14 +129,16 @@ code --install-extension bierner.markdown-mermaid
 Before setting up PR Buddy, ensure you have:
 
 - **Python 3.10+** installed
-- **Docker** (optional, for containerized deployment)
-- **Go 1.21+** (for GitHub MCP server if building from source)
-- **Cursor IDE** (latest version with MCP support)
 - **Git** configured with your credentials
+- **Cursor IDE** (latest version with MCP support)
+- **Go 1.21+** (recommended for GitHub MCP server local build)
+- **Docker** (optional alternative to Go for GitHub server)
 - **Access to:**
   - GitHub account with Personal Access Token
-  - Jira Cloud instance with API token
+  - Jira Cloud instance with API token (optional)
   - Repository permissions for PR operations
+
+> **Note:** The setup script prefers local builds over Docker for better performance and reliability. Docker is only used if explicitly chosen or if Go is not available.
 
 ## 🛠️ Complete Setup Guide
 
@@ -191,14 +193,14 @@ cd servers/cve-search && uv sync && cd ../..
 cd servers/git && uv sync && cd ../..
 cd servers/jira-mcp && uv sync && cd ../..
 
-# For GitHub server (choose one):
-# Option A: Docker
-docker pull ghcr.io/github/github-mcp-server
-
-# Option B: Build from source
+# For GitHub server (recommended: local build):
+# Option A: Build from source (RECOMMENDED - better performance)
 cd servers/github-mcp-server
 go build -o github-mcp-server cmd/github-mcp-server/main.go
 cd ../..
+
+# Option B: Docker (only if Go is not available)
+docker pull ghcr.io/github/github-mcp-server
 ```
 
 #### Step 3: Configure

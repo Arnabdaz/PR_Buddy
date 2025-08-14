@@ -24,10 +24,10 @@ clear
 echo -e "${CYAN}"
 echo "╔══════════════════════════════════════════════════════════════════╗"
 echo "║                                                                  ║"
-echo "║            🚀 PR BUDDY INTERACTIVE SETUP 🚀                     ║"
+echo "║             🚀 PR BUDDY INTERACTIVE SETUP 🚀                      ║"
 echo "║                                                                  ║"
-echo "║         AI-Powered Pull Request Assistant Installation          ║"
-echo "║                           Version 1.0                           ║"
+echo "║         AI-Powered Pull Request Assistant Installation           ║"
+echo "║                           Version 1.0                            ║"
 echo "║                                                                  ║"
 echo "╚══════════════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
@@ -183,34 +183,60 @@ fi
 
 # Check Docker (optional)
 echo -n "Checking Docker (optional)... "
+DOCKER_AVAILABLE=false
 if command_exists docker; then
     if docker info >/dev/null 2>&1; then
         DOCKER_VERSION=$(docker --version | cut -d' ' -f3 | sed 's/,$//')
         print_success "Found and running (v$DOCKER_VERSION)"
-    USE_DOCKER=true
+        DOCKER_AVAILABLE=true
     else
         print_warning "Found but not running"
-        USE_DOCKER=false
         OPTIONAL_MISSING+=("Docker daemon not running")
     fi
 else
-    print_warning "Not found (will use local build for GitHub server)"
-    USE_DOCKER=false
+    print_warning "Not found"
     OPTIONAL_MISSING+=("docker")
 fi
 
-# Check Go (optional for GitHub server)
-if [ "$USE_DOCKER" = false ]; then
-    echo -n "Checking Go (for GitHub server)... "
-    if command_exists go; then
-        GO_VERSION=$(go version | cut -d' ' -f3 | sed 's/go//')
-        print_success "Found (v$GO_VERSION)"
-        CAN_BUILD_GITHUB=true
+# Check Go (for GitHub server local build)
+echo -n "Checking Go (for GitHub server)... "
+if command_exists go; then
+    GO_VERSION=$(go version | cut -d' ' -f3 | sed 's/go//')
+    print_success "Found (v$GO_VERSION)"
+    CAN_BUILD_GITHUB=true
+else
+    print_warning "Not found"
+    OPTIONAL_MISSING+=("go")
+    CAN_BUILD_GITHUB=false
+fi
+
+# Ask user preference for GitHub server installation
+USE_DOCKER=false
+if [ "$DOCKER_AVAILABLE" = true ] && [ "$CAN_BUILD_GITHUB" = true ]; then
+    echo
+    print_info "Both Docker and Go are available for GitHub server."
+    if prompt_yes_no "Use Docker for GitHub server? (No = use local build)" "n"; then
+        USE_DOCKER=true
+        print_info "Will use Docker for GitHub server"
     else
-        print_warning "Not found (GitHub server may not work without Docker)"
-        OPTIONAL_MISSING+=("go")
-        CAN_BUILD_GITHUB=false
+        USE_DOCKER=false
+        print_info "Will use local build for GitHub server"
     fi
+elif [ "$DOCKER_AVAILABLE" = true ] && [ "$CAN_BUILD_GITHUB" = false ]; then
+    echo
+    print_warning "Go not available. Docker is required for GitHub server."
+    if prompt_yes_no "Use Docker for GitHub server?" "y"; then
+        USE_DOCKER=true
+    else
+        print_error "Cannot install GitHub server without Go or Docker"
+        MISSING_DEPS+=("go or docker for GitHub server")
+    fi
+elif [ "$DOCKER_AVAILABLE" = false ] && [ "$CAN_BUILD_GITHUB" = true ]; then
+    USE_DOCKER=false
+    print_info "Will use local build for GitHub server (Docker not available)"
+elif [ "$DOCKER_AVAILABLE" = false ] && [ "$CAN_BUILD_GITHUB" = false ]; then
+    print_error "Neither Docker nor Go available for GitHub server"
+    OPTIONAL_MISSING+=("GitHub server (needs Docker or Go)")
 fi
 
 # Report missing dependencies
@@ -377,24 +403,38 @@ install_server "Jira Server" "$SERVERS_DIR/jira-mcp" "jira_mcp_server"
 echo
 echo -e "${CYAN}[GitHub Server]${NC}"
 if [ "$USE_DOCKER" = true ]; then
+    print_info "Using Docker for GitHub server..."
     print_info "Pulling Docker image..."
     if docker pull ghcr.io/github/github-mcp-server >/dev/null 2>&1; then
-    print_success "GitHub server Docker image ready"
-else
-        print_warning "Failed to pull Docker image"
-        FAILED_SERVERS+=("GitHub (Docker)")
+        print_success "GitHub server Docker image ready"
+    else
+        print_warning "Failed to pull Docker image, trying to build locally..."
+        if [ "$CAN_BUILD_GITHUB" = true ]; then
+            cd "$SERVERS_DIR/github-mcp-server"
+            print_info "Building from source as fallback..."
+            if go build -o github-mcp-server cmd/github-mcp-server/main.go 2>/dev/null; then
+                print_success "GitHub server built locally"
+                USE_DOCKER=false  # Update flag since we're using local build
+            else
+                print_warning "Build failed"
+                FAILED_SERVERS+=("GitHub")
+            fi
+        else
+            print_error "Cannot build locally (Go not available)"
+            FAILED_SERVERS+=("GitHub")
+        fi
     fi
 elif [ "$CAN_BUILD_GITHUB" = true ]; then
-        cd "$SERVERS_DIR/github-mcp-server"
-    print_info "Building from source..."
+    cd "$SERVERS_DIR/github-mcp-server"
+    print_info "Building GitHub server from source (local build)..."
     if go build -o github-mcp-server cmd/github-mcp-server/main.go 2>/dev/null; then
-            print_success "GitHub server built"
-        else
+        print_success "GitHub server built successfully"
+    else
         print_warning "Build failed"
         FAILED_SERVERS+=("GitHub (Build)")
     fi
 else
-    print_warning "GitHub server cannot be installed (no Docker or Go)"
+    print_warning "GitHub server cannot be installed (no Docker or Go available)"
     FAILED_SERVERS+=("GitHub")
 fi
 
