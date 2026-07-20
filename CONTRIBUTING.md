@@ -54,7 +54,7 @@ We welcome various types of contributions:
 
 ```bash
 # Navigate to specific server
-cd servers/[cve-search|git|github-mcp-server|jira-mcp]
+cd servers/[cve-search|git|github-mcp-server|jira-mcp|slack-mcp]
 
 # Install dependencies
 uv sync --dev

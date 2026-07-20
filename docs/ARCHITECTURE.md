@@ -32,6 +32,7 @@ graph TB
             GITHUB["🐙 GitHub Server<br/>• PR management<br/>• Issue tracking<br/>• Actions control"]
             JIRA["🎫 Jira Server<br/>• Ticket retrieval<br/>• Requirement sync<br/>• Comment posting"]
             CVE["🛡️ CVE Server<br/>• Vulnerability scan<br/>• Security alerts<br/>• Risk assessment"]
+            SLACK["💬 Slack Server<br/>• Channel messaging<br/>• PR notifications<br/>• Review alerts"]
         end
 
         subgraph "Host Environment"
@@ -50,15 +51,18 @@ graph TB
     PR_REVIEW --> GITHUB
     PR_REVIEW --> JIRA
     PR_REVIEW --> CVE
+    PR_REVIEW --> SLACK
 
     PR_UPDATE --> GIT
     PR_UPDATE --> GITHUB
     PR_UPDATE --> JIRA
+    PR_UPDATE --> SLACK
 
     style PR_CREATE fill:#4CAF50,stroke:#2E7D32,color:#fff
     style PR_REVIEW fill:#2196F3,stroke:#1565C0,color:#fff
     style PR_UPDATE fill:#FF9800,stroke:#E65100,color:#fff
     style CVE fill:#F44336,stroke:#C62828,color:#fff
+    style SLACK fill:#611f69,stroke:#3d1240,color:#fff
 ```
 
 ## Component Architecture
@@ -88,6 +92,7 @@ graph LR
         GITHUB_SRV["GitHub Server"]
         JIRA_SRV["Jira Server"]
         CVE_SRV["CVE Server"]
+        SLACK_SRV["Slack Server"]
     end
 
     subgraph "External Services"
@@ -95,6 +100,7 @@ graph LR
         JIRA_API["Jira Cloud API"]
         CVE_DB["CVE Databases"]
         LOCAL_GIT["Local Git Repos"]
+        SLACK_API["Slack Web API"]
     end
 
     CURSOR_UI --> AGENT_MODE
@@ -108,11 +114,13 @@ graph LR
     SERVER_MANAGER --> GITHUB_SRV
     SERVER_MANAGER --> JIRA_SRV
     SERVER_MANAGER --> CVE_SRV
+    SERVER_MANAGER --> SLACK_SRV
 
     GIT_SRV --> LOCAL_GIT
     GITHUB_SRV --> GITHUB_API
     JIRA_SRV --> JIRA_API
     CVE_SRV --> CVE_DB
+    SLACK_SRV --> SLACK_API
 
     style RULE_ENGINE fill:#4CAF50,stroke:#2E7D32,color:#fff
     style MCP_PROTOCOL fill:#2196F3,stroke:#1565C0,color:#fff
@@ -441,6 +449,7 @@ graph LR
 | GitHub Server (Docker) | 3-5s         | ~300MB       | Medium    |
 | Jira Server            | < 1s         | ~100MB       | Low       |
 | CVE Server             | < 2s         | ~100MB       | Low       |
+| Slack Server           | < 1s         | ~50MB        | Low       |
 
 ## Scalability
 

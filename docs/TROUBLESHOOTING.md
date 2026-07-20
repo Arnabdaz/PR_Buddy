@@ -449,7 +449,7 @@ git --version
 echo
 
 echo "Checking Servers:"
-for server in cve-search git github-mcp-server jira-mcp; do
+for server in cve-search git github-mcp-server jira-mcp slack-mcp; do
     if [ -d "servers/$server" ]; then
         echo "✓ $server directory exists"
     else

@@ -5,11 +5,12 @@
 1. **Created PR Buddy Repository Structure**
 
    - Main repository with documentation and setup scripts
-   - 4 MCP servers linked as git submodules (all public GitHub repos):
+   - 5 MCP servers linked as git submodules (all public GitHub repos):
      - `servers/cve-search` → https://github.com/Arnabdaz/CVE-Search-MCP.git
      - `servers/git` → https://github.com/Arnabdaz/Git_MCP_finetuned.git
      - `servers/github-mcp-server` → https://github.com/Arnabdaz/Github_MCP_trimmed.git
      - `servers/jira-mcp` → https://github.com/Arnabdaz/Jira_MCP_basic.git
+     - `servers/slack-mcp` → https://github.com/Arnabdaz/Slack_MCP.git
 
 2. **Documentation Created**
 

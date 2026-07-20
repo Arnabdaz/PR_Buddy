@@ -20,13 +20,14 @@
 
 ## 🎯 Overview
 
-**PR Buddy** is an advanced AI-powered pull request management system that seamlessly integrates with your development workflow through the Model Context Protocol (MCP). It combines four powerful MCP servers with intelligent AI rules to automate and enhance your PR lifecycle - from creation through review to merging.
+**PR Buddy** is an advanced AI-powered pull request management system that seamlessly integrates with your development workflow through the Model Context Protocol (MCP). It combines five powerful MCP servers with intelligent AI rules to automate and enhance your PR lifecycle - from creation through review to merging.
 
 ### What Makes PR Buddy Special?
 
 - **🤖 AI-Driven Automation** - Intelligent PR creation, review, and updates using Cursor's AI agents
 - **🔒 Security-First** - Built-in CVE scanning and vulnerability detection
-- **🔗 Full Integration** - Seamless GitHub, Git, Jira, and security tool integration
+- **🔗 Full Integration** - Seamless GitHub, Git, Jira, Slack, and security tool integration
+- **💬 Team Notifications** - Slack integration for PR updates and review alerts
 - **⚡ Zero Context Switching** - Everything happens within your IDE
 
 ## ✨ Key Features
@@ -38,6 +39,7 @@
 | **Safe Updates**          | Intelligent PR modifications that preserve important information                    |
 | **CVE Scanning**          | Real-time vulnerability detection in dependencies and code                          |
 | **Jira Integration**      | Automatic ticket linking, requirement verification, and status updates              |
+| **Slack Notifications**   | Send PR updates, review requests, and status alerts to Slack channels               |
 | **GitHub Actions**        | Workflow management, CI/CD integration, and automated testing                       |
 
 ## 📁 Repository Structure
@@ -59,7 +61,8 @@ pr-buddy/
     ├── cve-search/            # CVE vulnerability scanner
     ├── git/                   # Git operations server
     ├── github-mcp-server/     # GitHub integration
-    └── jira-mcp/             # Jira integration
+    ├── jira-mcp/              # Jira integration
+    └── slack-mcp/             # Slack notifications
 ```
 
 ## 🚀 Quick Start
@@ -161,11 +164,13 @@ graph LR
     C --> E[GitHub Server]
     C --> F[Jira Server]
     C --> G[CVE Scanner]
+    C --> L[Slack Server]
 
     D --> H[Local Operations]
     E --> I[PR Management]
     F --> J[Ticket Sync]
     G --> K[Security Scan]
+    L --> M[Team Notifications]
 
     style C fill:#4CAF50,stroke:#2E7D32,color:#fff
     style B fill:#2196F3,stroke:#1565C0,color:#fff
@@ -236,7 +241,7 @@ PR Buddy is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 - **Model Context Protocol** team for the MCP framework
 - **Cursor** team for the amazing IDE integration
-- **GitHub**, **Atlassian**, and **CIRCL** for their APIs
+- **GitHub**, **Atlassian**, **Slack**, and **CIRCL** for their APIs
 - All contributors and users of PR Buddy
 
 ---

@@ -10,3 +10,6 @@
 [submodule "servers/jira-mcp"]
 	path = servers/jira-mcp
 	url = https://github.com/Arnabdaz/Jira_MCP_basic.git
+[submodule "servers/slack-mcp"]
+	path = servers/slack-mcp
+	url = https://github.com/Arnabdaz/Slack_MCP.git

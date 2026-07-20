@@ -26,10 +26,10 @@ This document provides ASCII representations of the architecture diagrams for en
 │  │  • Branch mgmt       • Issue tracking    • Requirement sync   │  │
 │  │  • Commits           • Actions           • Comments           │  │
 │  │                                                               │  │
-│  │                 🛡️ CVE Security Server                        │  │
-│  │                 • Vulnerability scanning                      │  │
-│  │                 • Security alerts                             │  │
-│  │                 • Risk assessment                             │  │
+│  │       🛡️ CVE Security Server      💬 Slack Server            │  │
+│  │       • Vulnerability scanning     • Channel messaging        │  │
+│  │       • Security alerts            • PR notifications          │  │
+│  │       • Risk assessment            • Review alerts            │  │
 │  │                                                               │  │
 │  └───────────────────────────────────────────────────────────────┘  │
 │                              ▲                                      │
