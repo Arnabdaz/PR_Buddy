@@ -131,6 +131,7 @@ The rules interact with:
 - **GitHub Server**: PR operations, API interactions
 - **Jira Server**: Ticket retrieval, requirement sync
 - **CVE Server**: Security vulnerability scanning
+- **Slack Server**: Public-channel search, thread reading, and PR notifications (with confirmation)
 
 ## 📝 Customization
 

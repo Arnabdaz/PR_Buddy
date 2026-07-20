@@ -52,6 +52,7 @@ pr-buddy/
 │   ├── PREREQUISITES.md        # System requirements & tools
 │   ├── SETUP_GITHUB.md        # GitHub token setup guide
 │   ├── SETUP_JIRA.md          # Jira integration guide
+│   ├── SETUP_SLACK.md         # Slack token setup guide
 │   └── TROUBLESHOOTING.md     # Common issues & solutions
 ├── rules/                      # AI agent rules for Cursor
 │   ├── pr-creation.mdc        # PR creation assistant
@@ -112,6 +113,7 @@ The setup script will:
 | **[📋 Prerequisites](docs/PREREQUISITES.md)**     | System requirements, tool installation, and environment setup |
 | **[🔐 GitHub Setup](docs/SETUP_GITHUB.md)**       | Creating and configuring GitHub Personal Access Tokens        |
 | **[🎫 Jira Setup](docs/SETUP_JIRA.md)**           | Setting up Jira API tokens and integration                    |
+| **[💬 Slack Setup](docs/SETUP_SLACK.md)**         | Setting up a Slack user token for channel search and messaging |
 | **[🔧 Troubleshooting](docs/TROUBLESHOOTING.md)** | Solutions for common issues and debugging tips                |
 
 ### Quick References
@@ -215,7 +217,7 @@ graph LR
 ### Quick Fixes
 
 - **MCP servers not starting?** → Check [Troubleshooting Guide](docs/TROUBLESHOOTING.md#mcp-server-issues)
-- **Authentication failing?** → Review [GitHub Setup](docs/SETUP_GITHUB.md) or [Jira Setup](docs/SETUP_JIRA.md)
+- **Authentication failing?** → Review [GitHub Setup](docs/SETUP_GITHUB.md), [Jira Setup](docs/SETUP_JIRA.md), or [Slack Setup](docs/SETUP_SLACK.md)
 - **Rules not working?** → See [Troubleshooting Guide](docs/TROUBLESHOOTING.md#cursor-integration-issues)
 
 ### Support Channels

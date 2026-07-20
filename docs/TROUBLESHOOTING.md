@@ -181,6 +181,31 @@ curl -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
 3. Ensure email matches Jira account
 4. Verify API access is enabled for your account
 
+### Slack Connection Failed
+
+**Problem**: `invalid_auth`, `not_authed`, `missing_scope`, or a channel is refused
+
+**Diagnosis**:
+
+```bash
+# Test the token
+curl -s -H "Authorization: Bearer $SLACK_USER_TOKEN" \
+  https://slack.com/api/auth.test
+```
+
+A healthy response contains `"ok":true`. `{"ok":false,"error":"invalid_auth"}` means the
+token is wrong or revoked.
+
+**Solutions**:
+
+1. Use the **User OAuth Token** (`xoxp-...`), **not** a bot token (`xoxb-...`) — Slack's
+   `search.messages` only accepts user tokens
+2. On `missing_scope`, add the missing User Token Scope (`search:read`, `channels:history`,
+   `channels:read`, `users:read`, `chat:write`) and **reinstall** the app
+3. On a refused channel, confirm it is a **public** channel — DMs, private channels, and
+   group DMs are not supported
+4. Update the token in `~/.pr-buddy/.env` (`SLACK_USER_TOKEN`)
+
 ### GitHub Enterprise Issues
 
 **Problem**: Cannot connect to GitHub Enterprise
@@ -475,6 +500,12 @@ if [ -n "$JIRA_API_TOKEN" ]; then
     curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
       "$JIRA_BASE_URL/rest/api/3/myself" > /dev/null 2>&1 && \
       echo "✓ Jira connection OK" || echo "✗ Jira connection failed"
+fi
+
+if [ -n "$SLACK_USER_TOKEN" ]; then
+    curl -s -H "Authorization: Bearer $SLACK_USER_TOKEN" \
+      https://slack.com/api/auth.test 2>/dev/null | grep -q '"ok":true' && \
+      echo "✓ Slack connection OK" || echo "✗ Slack connection failed"
 fi
 
 echo

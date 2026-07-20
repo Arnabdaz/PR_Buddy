@@ -91,6 +91,21 @@ cp rules/*.mdc ~/.cursor/rules/
 | `check_high_severity_cves` | Get critical CVEs      | "Show recent critical CVEs"  |
 | `get_recent_cves`          | Latest vulnerabilities | "CVEs from last 7 days"      |
 
+### Slack Operations (`mcp_slack_*`)
+
+Public channels only. Posting is a two-step flow: `draft_message` returns a preview and a
+one-time confirmation token, then `send_message` posts it — nothing is sent automatically.
+
+| Tool                  | Purpose                          | Example                                  |
+| --------------------- | -------------------------------- | ---------------------------------------- |
+| `search_messages`     | Search public-channel messages   | "Search Slack for DSE-1234"              |
+| `read_thread`         | Read a full thread with replies  | "Read that thread in #dev-reviews"       |
+| `read_channel_history`| Read recent channel messages     | "Show recent #dev-reviews messages"      |
+| `list_channels`       | List public channels             | "List Slack channels matching 'review'"  |
+| `resolve_users`       | Resolve user IDs to names        | "Who is U01234567?"                      |
+| `draft_message`       | Draft a message (returns token)  | "Draft a PR update note for #dev-reviews"|
+| `send_message`        | Post a drafted message (confirm) | "Send it"                                |
+
 ## 📋 PR Template Structure
 
 ```markdown
@@ -196,6 +211,8 @@ export JIRA_API_TOKEN="ATATT3xFfGF0..."
 # Optional
 export GITHUB_HOST="https://github.com"
 export DEFAULT_GIT_REPO="/path/to/repo"
+export SLACK_USER_TOKEN="xoxp-..."          # Slack user token (note: xoxp-, not xoxb-)
+export SLACK_DRAFT_TTL_SECONDS="300"        # Draft confirmation window (default 300s)
 export MCP_LOG_LEVEL="DEBUG"  # For troubleshooting
 ```
 
@@ -208,6 +225,7 @@ export MCP_LOG_LEVEL="DEBUG"  # For troubleshooting
 | PR creation fails         | Check branch protection rules |
 | CVE scan timeout          | Reduce scope, retry           |
 | Jira sync issues          | Verify API token permissions  |
+| Slack search/send fails   | Use user token (xoxp-), check scopes; public channels only |
 
 ## 📝 Common Patterns
 

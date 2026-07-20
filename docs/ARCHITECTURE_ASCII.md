@@ -99,6 +99,7 @@ User                Cursor              PR Buddy         GitHub/CVE/Jira
 │  │ Git: Low │        │ Git: 50MB │    │ Git: Local│    │
 │  │ GH: Med  │        │ GH: 200MB │    │ GH: API   │    │
 │  │ Jira: Low│        │ Jira:100MB│    │ Jira: API │    │
+│  │ Slk: Low │        │ Slk: 50MB │    │ Slk: API  │    │
 │  └──────────┘        └───────────┘    └───────────┘    │
 │                                                        │
 └────────────────────────────────────────────────────────┘
@@ -132,10 +133,12 @@ User                Cursor              PR Buddy         GitHub/CVE/Jira
     │  Server │      │  Server  │      │  Server │
     └─────────┘      └──────────┘      └─────────┘
                            │
-                     ┌─────▼────┐
-                     │   CVE    │
-                     │  Server  │
-                     └──────────┘
+                  ┌────────┴────────┐
+                  │                 │
+            ┌─────▼────┐      ┌─────▼────┐
+            │   CVE    │      │  Slack   │
+            │  Server  │      │  Server  │
+            └──────────┘      └──────────┘
 ```
 
 ---

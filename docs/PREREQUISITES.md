@@ -172,4 +172,5 @@ Once all prerequisites are installed:
 
 1. [Set up GitHub Access Token](./SETUP_GITHUB.md)
 2. [Set up Jira Access Token](./SETUP_JIRA.md) (optional)
-3. Return to the [main README](../README.md#-complete-setup-guide) for installation
+3. [Set up Slack User Token](./SETUP_SLACK.md) (optional)
+4. Return to the [main README](../README.md#-complete-setup-guide) for installation
