@@ -285,7 +285,8 @@ echo "Checking git submodules..."
 if [ ! -d "$SERVERS_DIR/cve-search/.git" ] || \
    [ ! -d "$SERVERS_DIR/git/.git" ] || \
    [ ! -d "$SERVERS_DIR/github-mcp-server/.git" ] || \
-   [ ! -d "$SERVERS_DIR/jira-mcp/.git" ]; then
+   [ ! -d "$SERVERS_DIR/jira-mcp/.git" ] || \
+   [ ! -d "$SERVERS_DIR/slack-mcp/.git" ]; then
     
     print_info "Initializing git submodules..."
     git submodule init 2>/dev/null &
@@ -398,6 +399,7 @@ install_server() {
 install_server "CVE Search Server" "$SERVERS_DIR/cve-search" "mcp_server_cve_search"
 install_server "Git Server" "$SERVERS_DIR/git" "mcp_server_git"
 install_server "Jira Server" "$SERVERS_DIR/jira-mcp" "jira_mcp_server"
+install_server "Slack Server" "$SERVERS_DIR/slack-mcp" "slack_mcp_server"
 
 # GitHub Server
 echo
@@ -486,6 +488,17 @@ fi
 
 echo
 
+# Slack Configuration
+echo -e "${BOLD}Slack Configuration:${NC}"
+echo "Note: use the User OAuth Token (xoxp-...), not a bot token (xoxb-...)."
+prompt_input "Slack User OAuth Token (xoxp-...)" "SLACK_USER_TOKEN" "" true
+if [ -z "$SLACK_USER_TOKEN" ]; then
+    print_info "Skipping Slack configuration (not using Slack)"
+    echo "  Create an app at: https://api.slack.com/apps"
+fi
+
+echo
+
 # Git server will work with any repository - no default needed
 DEFAULT_GIT_REPO=""
 
@@ -553,6 +566,9 @@ GITHUB_HOST="${GITHUB_HOST}"
 JIRA_BASE_URL="${JIRA_BASE_URL}"
 JIRA_EMAIL="${JIRA_EMAIL}"
 JIRA_API_TOKEN="${JIRA_TOKEN}"
+
+# Slack Configuration
+SLACK_USER_TOKEN="${SLACK_USER_TOKEN}"
 
 # Repository Configuration
 # Git server works with any repository - no default needed
@@ -685,6 +701,29 @@ if [ -n "$JIRA_BASE_URL" ]; then
 EOF
 fi
 
+# Add Slack server if configured.
+# A leading comma keeps the JSON valid whether or not the preceding
+# entry (GitHub or Jira) already emitted a trailing comma.
+if [ -n "$SLACK_USER_TOKEN" ]; then
+    cat >> "$MCP_CONFIG" << EOF
+    ,
+    "pr-buddy-slack": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${SERVERS_DIR}/slack-mcp",
+        "run",
+        "slack-mcp"
+      ],
+      "env": {
+        "SLACK_USER_TOKEN": "${SLACK_USER_TOKEN}"
+      },
+      "name": "Slack Integration",
+      "description": "Searches Slack and posts PR notifications (with confirmation)"
+    }
+EOF
+fi
+
 cat >> "$MCP_CONFIG" << EOF
   }
 }
@@ -726,6 +765,16 @@ if [ -n "$JIRA_BASE_URL" ] && [ -n "$JIRA_EMAIL" ] && [ -n "$JIRA_TOKEN" ]; then
     fi
 fi
 
+if [ -n "$SLACK_USER_TOKEN" ]; then
+    echo -n "Testing Slack connection... "
+    if curl -s -H "Authorization: Bearer $SLACK_USER_TOKEN" \
+         https://slack.com/api/auth.test 2>/dev/null | grep -q '"ok":true'; then
+        print_success "Connected"
+    else
+        print_warning "Failed (check token; must be a user token, xoxp-...)"
+    fi
+fi
+
 # ============================================================================
 # FINAL INSTRUCTIONS
 # ============================================================================
@@ -754,10 +803,11 @@ echo -e "   ${CYAN}@pr-review.mdc Review PR Sense/cloudera-sense/123${NC}"
 echo -e "   ${CYAN}@pr-update.mdc Update PR Sense/cloudera-sense/456 description${NC}"
 echo
 
-if [ -z "$GITHUB_TOKEN" ] || [ -z "$JIRA_BASE_URL" ]; then
+if [ -z "$GITHUB_TOKEN" ] || [ -z "$JIRA_BASE_URL" ] || [ -z "$SLACK_USER_TOKEN" ]; then
     echo -e "${YELLOW}⚠️  Remember to configure:${NC}"
     [ -z "$GITHUB_TOKEN" ] && echo "   - GitHub Personal Access Token in $ENV_FILE"
     [ -z "$JIRA_BASE_URL" ] && echo "   - Jira credentials in $ENV_FILE"
+    [ -z "$SLACK_USER_TOKEN" ] && echo "   - Slack User Token in $ENV_FILE"
     echo
 fi
 
