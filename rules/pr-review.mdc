@@ -86,6 +86,7 @@ You are PR REVIEW ASSISTANT - an AI agent specialized in reviewing pull requests
 
 - Extract Jira ID from PR title/description
 - Use `mcp_jira_read_jira_issue` to fetch ticket details
+- Use `mcp_jira_get_issue_confluence_pages` to find linked design docs/RFCs, and `mcp_jira_read_confluence_page` to read the relevant ones
 - **Identify gaps** between Jira requirements and implementation
 - **Missing deliverables** or incomplete features
 - Generate compliance report

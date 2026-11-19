@@ -11,6 +11,12 @@ PR Buddy uses Jira integration to:
 - Update ticket status and add comments
 - Verify acceptance criteria compliance
 - Sync PR status with Jira workflow
+- Find, search and read Confluence docs (design docs, RFCs linked from tickets)
+
+> **Confluence uses the same token.** Confluence Cloud lives on the same Atlassian
+> site (`https://yourcompany.atlassian.net/wiki`), so the Jira email + API token
+> below also give read access to Confluence — no extra setup, as long as your
+> account can use Confluence on that site.
 
 ## Prerequisites
 
@@ -35,11 +41,17 @@ PR Buddy uses Jira integration to:
 
 ### Step 2: Create New Token
 
-1. Click **"Create API token"**
-2. **Label your token**: `PR-Buddy-Integration`
+1. Click **"Create API token"** (not "Create API token with scopes" — scoped tokens
+   don't work with the `yourcompany.atlassian.net` URL PR Buddy uses)
+2. **Label your token**: `PR-Buddy-Integration`, and pick an expiry date
 3. Click **"Create"**
 4. **⚠️ IMPORTANT**: Copy the token immediately! You won't be able to see it again.
 5. Store it securely
+
+> **Tokens expire** (after at most one year). When yours does, Jira may quietly
+> answer some requests anonymously, so searches return nothing instead of an
+> error. If PR Buddy suddenly finds no tickets, create a new token and update
+> `JIRA_API_TOKEN`.
 
 ### Step 3: Find Your Jira Base URL
 
