@@ -72,7 +72,7 @@ pr-buddy/
 
 Before starting, ensure you have:
 
-- ✅ Python 3.10+
+- ✅ Python 3.10+ (3.11+ recommended; uv installs 3.11 for the CVE server automatically)
 - ✅ Git
 - ✅ Cursor IDE (latest version)
 - ✅ Go 1.21+ or Docker (for GitHub server)

@@ -2,21 +2,21 @@
 
 ## Required Software
 
-### 🐍 Python 3.10+
+### 🐍 Python 3.10+ (3.11+ recommended)
 
-Python is required for running the MCP servers.
+Python is required for running the MCP servers. The CVE server needs Python 3.11+ (FastMCP 4); if your system Python is older, `uv` downloads a matching Python for it automatically during setup. Python 3.10 reached end of life in October 2026, so 3.11+ is recommended.
 
 **Installation:**
 
-- **macOS**: `brew install python@3.10` or download from [python.org](https://www.python.org/downloads/)
-- **Linux**: `sudo apt-get install python3.10` (Ubuntu/Debian) or `sudo yum install python310` (RHEL/CentOS)
+- **macOS**: `brew install python@3.12` or download from [python.org](https://www.python.org/downloads/)
+- **Linux**: `sudo apt-get install python3.12` (Ubuntu/Debian) or `sudo dnf install python3.12` (RHEL/Fedora)
 - **Windows**: Download from [python.org](https://www.python.org/downloads/)
 
 **Verify Installation:**
 
 ```bash
 python3 --version
-# Should output: Python 3.10.x or higher
+# Should output: Python 3.10.x or higher (3.11+ recommended)
 ```
 
 ### 📦 UV Package Manager
