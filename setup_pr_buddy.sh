@@ -414,7 +414,7 @@ if [ "$USE_DOCKER" = true ]; then
         if [ "$CAN_BUILD_GITHUB" = true ]; then
             cd "$SERVERS_DIR/github-mcp-server"
             print_info "Building from source as fallback..."
-            if go build -o github-mcp-server cmd/github-mcp-server/main.go 2>/dev/null; then
+            if go build -o github-mcp-server ./cmd/github-mcp-server 2>/dev/null; then
                 print_success "GitHub server built locally"
                 USE_DOCKER=false  # Update flag since we're using local build
             else
@@ -429,7 +429,7 @@ if [ "$USE_DOCKER" = true ]; then
 elif [ "$CAN_BUILD_GITHUB" = true ]; then
     cd "$SERVERS_DIR/github-mcp-server"
     print_info "Building GitHub server from source (local build)..."
-    if go build -o github-mcp-server cmd/github-mcp-server/main.go 2>/dev/null; then
+    if go build -o github-mcp-server ./cmd/github-mcp-server 2>/dev/null; then
         print_success "GitHub server built successfully"
     else
         print_warning "Build failed"

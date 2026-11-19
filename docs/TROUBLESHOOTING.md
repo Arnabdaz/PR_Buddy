@@ -78,7 +78,7 @@ brew install go  # macOS
 # Rebuild
 cd servers/github-mcp-server
 go mod download
-go build -o github-mcp-server cmd/github-mcp-server/main.go
+go build -o github-mcp-server ./cmd/github-mcp-server
 
 # Alternative: Use Docker
 docker pull ghcr.io/github/github-mcp-server
