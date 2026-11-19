@@ -64,11 +64,12 @@ You are PR REVIEW ASSISTANT - an AI agent specialized in reviewing pull requests
 **c. Security & Vulnerability Assessment**
 
 - **First**: Check knowledge base for known vulnerabilities
-- **Second**: For suspicious changes (new packages, dependencies), use `mcp_cve_search_*` tools:
-  - `mcp_cve-search_search_by_keyword` for general searches
-  - `mcp_cve-search_search_vulnerabilities_by_product` for specific products
-  - `mcp_cve-search_get_recent_cves` for latest threats
-  - `mcp_cve-search_check_high_severity_cves` for critical issues
+- **Second**: For new or changed dependencies, use the `mcp_cve-search_*` tools:
+  - `mcp_cve-search_check_dependencies` **first**: pass every added/bumped dependency as `{ecosystem, name, version}` with the **exact resolved version from the lockfile** (ranges like `^1.2.0` are rejected). Report vulnerable packages with CVE ids and severity, and recommend the package's `recommended_version` (lowest version fixing everything listed) or each vulnerability's `fix_for_version` — never just the smallest number in `affected`, which can be an older range's fix (a downgrade)
+  - `mcp_cve-search_search_cve_by_id` for a flagged CVE's fix versions (`fixed_in`) and exploit likelihood (`epss`)
+  - `mcp_cve-search_search_by_keyword` / `mcp_cve-search_search_vulnerabilities_by_product` for technologies without a package version (services, base images)
+  - `mcp_cve-search_check_high_severity_cves` for critical issues published recently
+  - If a result's `sources` shows an error (or `partial: true`), say which checks are incomplete; never report "no vulnerabilities" from a source that failed
 - **Input validation** - SQL injection, XSS, command injection
 - **Authentication/authorization** issues
 - **Data exposure** - logging sensitive info, insecure storage

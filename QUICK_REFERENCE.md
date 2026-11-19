@@ -84,12 +84,14 @@ cp rules/*.mdc ~/.cursor/rules/
 
 ### CVE Operations (`mcp_cve_*`)
 
-| Tool                       | Purpose                | Example                      |
-| -------------------------- | ---------------------- | ---------------------------- |
-| `search_cve_by_id`         | Find specific CVE      | "Check CVE-2021-44228"       |
-| `search_by_keyword`        | Search by tech         | "Find React vulnerabilities" |
-| `check_high_severity_cves` | Get critical CVEs      | "Show recent critical CVEs"  |
-| `get_recent_cves`          | Latest vulnerabilities | "CVEs from last 7 days"      |
+| Tool                            | Purpose                                  | Example                                         |
+| ------------------------------- | ---------------------------------------- | ----------------------------------------------- |
+| `check_dependencies`            | Vulnerable deps in a PR (exact versions) | "Check the dependencies this PR bumps"          |
+| `check_package_vulnerabilities` | One package@version + fix version        | "Is log4j-core 2.14.1 vulnerable? What to use?" |
+| `search_cve_by_id`              | Find specific CVE (fix, EPSS)            | "Check CVE-2021-44228"                          |
+| `search_by_keyword`             | Search by tech                           | "Find React vulnerabilities"                    |
+| `check_high_severity_cves`      | Get critical CVEs                        | "Show recent critical CVEs"                     |
+| `get_recent_cves`               | Latest vulnerabilities                   | "CVEs from last 7 days"                         |
 
 ### Slack Operations (`mcp_slack_*`)
 
